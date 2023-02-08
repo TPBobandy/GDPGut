@@ -4,13 +4,15 @@
 #include <string>
 #include <sstream>
 #include <ctime>
-#include <chrono>
+
 
 class Vorratskammer {
     public:
     std::vector < std::string > dinge;
-    std::vector < std::string > daten;
-    std::vector < int > mengen;
+    std::vector < std::string > abldaten;
+    std::vector < int >         mengen;
+    std::vector<std::tm>        dates;
+    std::vector < std::time_t > uhrzeit;
     std::string ding;
 
     void einlesen(){
@@ -24,7 +26,7 @@ class Vorratskammer {
             getline(linestream, ding, '|');
             dinge.push_back(ding);
             getline(linestream, datum, '|');
-            daten.push_back(datum);
+            abldaten.push_back(datum);
             getline(linestream, menge, '|');
             mengen.push_back(std::stoi(menge));
         
@@ -33,26 +35,38 @@ class Vorratskammer {
 
         
         file.close();
-        
-        for (size_t i = 0; i < mengen.size(); i++){
 
-        std::cout << mengen[i] << std::endl;
-    }
+        
+        
+
+      
+
+       
+    
 }
     void zeit()
     {
-       auto start = std::chrono::system_clock::now();
-    // Some computation here
-    auto end = std::chrono::system_clock::now();
- 
-    std::chrono::duration<double> elapsed_seconds = end;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
- 
-    std::cout << "finished computation at " << std::ctime(&end_time)
-              << "elapsed time: " << elapsed_seconds.count() << "s"
-              << std::endl;
+        
+    for (const auto& date_string : abldaten) {
+    std::istringstream ss(date_string);
+    int year, day, month;
+    ss >> year >> day >> month;
+
+    std::tm date = {0};
+    date.tm_year = year - 1900;  // tm_year is years since 1900
+    date.tm_mon = month - 1;     // tm_mon is 0-based
+    date.tm_mday = day;
+    
+    dates.push_back(date);
+  }
+
+  std::cout << "The dates are:\n";
+  for (const auto& date : dates) {
+    std::cout << std::asctime(&date) << '\n';
+  }
 
     }
+
     int hinzufügen()
     {
         
@@ -63,18 +77,15 @@ class Vorratskammer {
 
                 std::cout << "Bitte geben sie einen Gegenstand ein\n";
                 std::cin >> ding;
-                std::cout << "Bitte geben sie das Jahr des Ablaufdatums ein\n";
-                std::cin >> y;
-                std::cout << "Bitte geben sie den Monat des Ablaufdatums ein\n";
-                std::cin >> m;
-                std::cout << "Bite geben sie den Tag des Ablaufdatums ein\n";
-                std::cin >> d;
+                std::cout << "Bitte geben sie das Ablaufdatum ein (Format YYYY MM DD)\n";
+                std::cin >> y >> m >> d;             
                 std::cout << "Bitte geben sie die Menge des Gegenstands an\n";
                 std::cin >> z;
+                    
 
-                    std::ofstream out;
+                std::ofstream out;
                     out.open("Vorratskammer.txt", std::ofstream::app);
-                    out << ding << "|" << d << "/" << m << "/" << y <<  "|" << z << "\n"; 
+                    out << ding << "|" << y << " " << d << " " << m <<  "|" << z << "\n"; 
                     out.close(); 
                     
 
@@ -159,7 +170,8 @@ class Vorratskammer {
  
 int main(){
 Vorratskammer vk;
-   vk.zeit();
+    vk.anzeigen();
+    
    
 }
    
