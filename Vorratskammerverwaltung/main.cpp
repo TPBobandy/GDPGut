@@ -5,7 +5,7 @@
 #include <sstream>
 #include <ctime>
 #include <cmath>
-
+#include <limits>
 
 class Vorratskammer {
     public:
@@ -68,7 +68,7 @@ class Vorratskammer {
         i++;
 
         if (diff_days < 7) {
-        std::cout << dinge[i-1] << " wird bald Ablaufen bitte verbrauchen sie diese bald\n";
+        std::cout << dinge[i-1] << " wird bald Ablaufen bitte verbrauchen sie diese bald \n";
             }
         
         }
@@ -84,18 +84,27 @@ class Vorratskammer {
 
                 std::cout << "Bitte geben sie einen Gegenstand ein\n";
                 std::cin >> ding;
-                std::cout << "Bitte geben sie das Ablaufdatum ein (Format YYYY MM DD)\n";
+                std::cout << "Bitte geben sie das Ablaufdatum ein (Format JJJJ MM TT)\n";
                 std::cin >> y >> m >> d;             
                 std::cout << "Bitte geben sie die Menge des Gegenstands an\n";
                 std::cin >> z;
 
+            if(std::cin.fail() ) {
+                
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                std::cout << "Fehlerhafte eingabe!!\n";
+                hinzufügen();
+            }
 
+            else {
                 std::ofstream out;
                     out.open("Vorratskammer.txt", std::ofstream::app);
                     out << ding << "|" << y << " " << d << " " << m <<  "|" << z << "\n"; 
                     out.close(); 
-                    
+            }     
 
+        einlesen();
         return 0;
     
     }
@@ -149,9 +158,13 @@ class Vorratskammer {
             std::cout << "Willkommen bei ihrer Vorratskammer\n\n";
         do
         {
-            std::cout << "0. Verlassen\n1.Gegenstand hinzufügen\n2.Dinge verbrauchen oder entfernen\n3.Lassen sie sich Gespeicherte gegenstände anzeigen\n4.Lassen sie sich ausgeben welche Gegenstände bald auslaufen";
+            std::cout << "0. Verlassen\n1.Gegenstand hinzufügen\n2.Dinge verbrauchen oder entfernen\n3.Lassen sie sich Gespeicherte gegenstände anzeigen\n4.Lassen sie sich ausgeben welche Gegenstände bald auslaufen\n";
             std::cin >> choice;
 
+        if (choice < 0 || choice > 4 ){
+            
+
+        }
 
             switch(choice)
         {
